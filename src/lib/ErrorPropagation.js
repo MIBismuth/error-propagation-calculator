@@ -1,5 +1,4 @@
-import { exp, simplify } from 'mathjs';
-import Algebrite from 'algebrite';
+import * as math from 'mathjs'
 
 const trigFunctions = [
 	'sin',

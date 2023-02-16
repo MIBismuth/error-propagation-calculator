@@ -36,7 +36,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"algebrite": "^1.4.0",
 		"katex": "^0.16.4",
 		"mathjs": "^11.5.1"
 	}
