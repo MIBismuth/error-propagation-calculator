@@ -1,5 +1,6 @@
 import { c as create_ssr_component, d as each, f as add_attribute, e as escape, v as validate_component } from "../../chunks/index.js";
 import "katex";
+import { simplify } from "mathjs";
 const Dropdown = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { OptionList = ["default"] } = $$props;
   let { Option = "default" } = $$props;
@@ -57,6 +58,13 @@ const Variable_menu = create_ssr_component(($$result, $$props, $$bindings, slots
 		</div>`;
   })}</div>`;
 });
+const rules_simp = [
+  "n1/n2/n3 -> n1/(n2*n3)",
+  "n1^(1/2) -> sqrt(n1)",
+  "n1^(-1/2) -> 1/sqrt(n1)",
+  "sqrt(n1^2*n2^2) -> n1*n2"
+];
+simplify.rules.concat(rules_simp);
 const _page_svelte_svelte_type_style_lang = "";
 const css = {
   code: "html{background-color:#23272a;--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity))}",
