@@ -1,0 +1,331 @@
+import { exp, simplify } from 'mathjs';
+import Algebrite from 'algebrite';
+
+const trigFunctions = [
+	'sin',
+	'cos',
+	'tan',
+	'sec',
+	'csc',
+	'cot',
+	'asin',
+	'acos',
+	'atan',
+	'asec',
+	'acsc',
+	'acot',
+	'sinh',
+	'cosh',
+	'tanh',
+	'sech',
+	'csch',
+	'coth',
+	'asinh',
+	'acosh',
+	'atanh',
+	'asech',
+	'acsch',
+	'acoth',
+	'abs',
+	'add',
+	'asin',
+	'acos',
+	'atan',
+	'acot',
+	'asec',
+	'acsc',
+	'acosh',
+	'asinh',
+	'atanh',
+	'acoth',
+	'atan2',
+	'bellNumbers',
+	'bitAnd',
+	'bitNot',
+	'bitOr',
+	'bitXor',
+	'boolean',
+	'cbrt',
+	'ceil',
+	'column',
+	'compare',
+	'concat',
+	'cos',
+	'cosh',
+	'cross',
+	'det',
+	'diag',
+	'divide',
+	'dot',
+	'equal',
+	'erf',
+	'erfc',
+	'exp',
+	'expm1',
+	'eye',
+	'filter',
+	'floor',
+	'forEach',
+	'gamma',
+	'get',
+	'identity',
+	'inv',
+	'larger',
+	'largest',
+	'lcm',
+	'log',
+	'log10',
+	'log1p',
+	'log2',
+	'map',
+	'matrix',
+	'max',
+	'mean',
+	'median',
+	'min',
+	'mod',
+	'multiply',
+	'norm',
+	'not',
+	'nthRoot',
+	'number',
+	'ones',
+	'or',
+	'parse',
+	'permutations',
+	'pickRandom',
+	'pivot',
+	'pow',
+	'prod',
+	'qr',
+	'quantileSeq',
+	'random',
+	'range',
+	'reshape',
+	'resize',
+	'round',
+	'row',
+	'set',
+	'sign',
+	'sin',
+	'sinh',
+	'size',
+	'slice',
+	'sort',
+	'sparse',
+	'squeeze',
+	'sqrt',
+	'sqrtm',
+	'subtract',
+	'sum',
+	'tan',
+	'tanh',
+	'trace',
+	'transpose',
+	'trunc',
+	'typeof',
+	'unaryMinus',
+	'unaryPlus',
+	'unique',
+	'update',
+	'variance',
+	'zeros',
+	'pi'
+];
+
+const Excel_to_mathjs = {
+	'CEILING(': 'ceiling(',
+	'DEGREES(': 'degrees(',
+	'RADIANS(': 'radians(',
+	'ACOSH(': 'acosh(',
+	'ASINH(': 'asinh(',
+	'ATAN2(': 'atan2(',
+	'ATANH(': 'atanh(',
+	'FLOOR(': 'floor(',
+	'LOG10(': 'log10(',
+	'POWER(': 'pow(',
+	'ROUND(': 'round(',
+	'ACOS(': 'acos(',
+	'ASIN(': 'asin(',
+	'ATAN(': 'atan(',
+	'COSH(': 'cosh(',
+	'FACT(': 'factorial(',
+	'SIGN(': 'sign(',
+	'SINH(': 'sinh(',
+	'SQRT(': 'sqrt(',
+	'TANH(': 'tanh(',
+	'COS(': 'cos(',
+	'EXP(': 'exp(',
+	'LOG(': 'log(',
+	'MOD(': 'mod(',
+	'SIN(': 'sin(',
+	'TAN(': 'tan(',
+	'ABS(': 'abs(',
+	'MAX(': 'max(',
+	'MIN(': 'min(',
+	'CSC(': 'csc(',
+	'LN(': 'ln(',
+	'PI()': 'pi'
+};
+
+function replaceExcelFunctions(input) {
+	for (let [key, value] of Object.entries(Excel_to_mathjs)) {
+		key = key.replace(/[()]/g, '\\$&');
+		const regex = new RegExp(`${key}`, 'g');
+		input = input.replace(regex, value);
+	}
+	return input;
+}
+
+function replaceMathjsFunctions(input) {
+	for (let [key, value] of Object.entries(Excel_to_mathjs)) {
+		value = value.replace(/[()]/g, '\\$&');
+		const regex = new RegExp(`${value}`, 'g');
+		input = input.replace(regex, key);
+	}
+	return input;
+}
+
+export function get_variables(exp_string) {
+	exp_string = exp_string.replace(/\s/g, '').replace(/\,/g, '.');
+	exp_string = replaceExcelFunctions(exp_string);
+	const node = math.parse(exp_string);
+	let variables = node
+		.filter(function (node) {
+			return node.isSymbolNode & !trigFunctions.includes(node.name);
+		})
+		.map(function (node) {
+			return node.name;
+		});
+	return variables;
+}
+
+export function get_latex_exp(exp_string, VariableList) {
+	exp_string = exp_string.toString().replace(/\s/g, '').replace(/\,/g, '.');
+	exp_string = replaceExcelFunctions(exp_string);
+
+	let exp = math.simplify(exp_string);
+	return exp.toTex();
+}
+
+export function get_error_propagation_exp(exp_string, VariableList, DisplayOption, ErrorOption) {
+	let name_list = VariableList.map((variable) => variable.name);
+	let alias_list = VariableList.map((variable) =>
+		variable.alias == '' ? variable.name : variable.alias
+	);
+	let error_list = VariableList.map((variable) =>
+		variable.error == '' ? `δ${variable.name}` : variable.error
+	);
+	let usable_list = VariableList.map((variable) => variable.usable);
+
+	const allFalse = usable_list.every((element) => element === false);
+	if (!name_list.length || allFalse) {
+		return '0';
+	}
+
+	exp_string = exp_string.replace(/\s/g, '').replace(/\,/g, '.');
+	exp_string = replaceExcelFunctions(exp_string);
+
+	switch (ErrorOption) {
+		case 'Absolute':
+			exp_string = get_ep_absolute(exp_string, name_list, alias_list, error_list, usable_list);
+			break;
+		case 'Quadratic':
+			exp_string = get_ep_quad(exp_string, name_list, alias_list, error_list, usable_list);
+			break;
+	}
+
+	switch (DisplayOption) {
+		case 'Python':
+			return math.simplify(exp_string).toString().replace(/\^/g, '**');
+			break;
+
+		case 'Excel':
+			return replaceMathjsFunctions(math.simplify(exp_string).toString());
+			break;
+
+		case 'Latex':
+			return get_latex_exp(exp_string);
+			break;
+	}
+}
+
+function get_ep_absolute(exp_string, name_list, alias_list, error_list, usable_list) {
+	let final = '';
+	var i,
+		vari,
+		len = name_list.length;
+	for (i = 0; i < len; ++i) {
+		vari = name_list[i];
+		if (usable_list[i]) {
+			final =
+				final + ` + abs(${math.derivative(exp_string, math.parse(vari)).toString()})*δ${vari}`;
+		}
+	}
+
+	// Create an object with key-value pairs for variable substitution -> aliases
+	let substitutions = name_list.reduce((obj, varName, index) => {
+		if (varName != alias_list[index]) {
+			obj[varName] = math.parse(alias_list[index]);
+		}
+		return obj;
+	}, {});
+
+	if (substitutions) {
+		final = math.simplify(final, substitutions);
+	}
+
+	//for error subsitution
+	substitutions = name_list.reduce((obj, varName, index) => {
+		if (`δ${varName}` != error_list[index]) {
+			obj[`δ${varName}`] = math.parse(error_list[index]);
+		}
+		return obj;
+	}, {});
+
+	if (substitutions) {
+		final = math.simplify(final, substitutions);
+	}
+
+	return final;
+}
+
+function get_ep_quad(exp_string, name_list, alias_list, error_list, usable_list) {
+	let final = '';
+	var i,
+		vari,
+		len = name_list.length;
+	for (i = 0; i < len; ++i) {
+		vari = name_list[i];
+		if (usable_list[i]) {
+			final =
+				final + ` + (${math.derivative(exp_string, math.parse(vari)).toString()})^2*(δ${vari})^2`;
+		}
+	}
+
+	// Create an object with key-value pairs for variable substitution -> aliases
+	let substitutions = name_list.reduce((obj, varName, index) => {
+		if (varName != alias_list[index]) {
+			obj[varName] = math.parse(alias_list[index]);
+		}
+		return obj;
+	}, {});
+
+	if (substitutions) {
+		final = math.simplify(final, substitutions);
+	}
+
+	//for error subsitution
+	substitutions = name_list.reduce((obj, varName, index) => {
+		if (`δ${varName}` != error_list[index]) {
+			obj[`δ${varName}`] = math.parse(error_list[index]);
+		}
+		return obj;
+	}, {});
+
+	if (substitutions) {
+		final = math.simplify(final, substitutions);
+	}
+
+	return `(${final.toString()})^(1/2)`;
+}
