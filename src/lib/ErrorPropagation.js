@@ -1,4 +1,4 @@
-import * as math from 'mathjs'
+import {parse, simplify, derivative} from 'mathjs'
 
 const trigFunctions = [
 	'sin',
@@ -188,7 +188,7 @@ function replaceMathjsFunctions(input) {
 export function get_variables(exp_string) {
 	exp_string = exp_string.replace(/\s/g, '').replace(/\,/g, '.');
 	exp_string = replaceExcelFunctions(exp_string);
-	const node = math.parse(exp_string);
+	const node = parse(exp_string);
 	let variables = node
 		.filter(function (node) {
 			return node.isSymbolNode & !trigFunctions.includes(node.name);
@@ -203,7 +203,7 @@ export function get_latex_exp(exp_string, VariableList) {
 	exp_string = exp_string.toString().replace(/\s/g, '').replace(/\,/g, '.');
 	exp_string = replaceExcelFunctions(exp_string);
 
-	let exp = math.simplify(exp_string);
+	let exp = simplify(exp_string);
 	return exp.toTex();
 }
 
@@ -236,11 +236,11 @@ export function get_error_propagation_exp(exp_string, VariableList, DisplayOptio
 
 	switch (DisplayOption) {
 		case 'Python':
-			return math.simplify(exp_string).toString().replace(/\^/g, '**');
+			return simplify(exp_string).toString().replace(/\^/g, '**');
 			break;
 
 		case 'Excel':
-			return replaceMathjsFunctions(math.simplify(exp_string).toString());
+			return replaceMathjsFunctions(simplify(exp_string).toString());
 			break;
 
 		case 'Latex':
@@ -258,32 +258,32 @@ function get_ep_absolute(exp_string, name_list, alias_list, error_list, usable_l
 		vari = name_list[i];
 		if (usable_list[i]) {
 			final =
-				final + ` + abs(${math.derivative(exp_string, math.parse(vari)).toString()})*δ${vari}`;
+				final + ` + abs(${derivative(exp_string, parse(vari)).toString()})*δ${vari}`;
 		}
 	}
 
 	// Create an object with key-value pairs for variable substitution -> aliases
 	let substitutions = name_list.reduce((obj, varName, index) => {
 		if (varName != alias_list[index]) {
-			obj[varName] = math.parse(alias_list[index]);
+			obj[varName] = parse(alias_list[index]);
 		}
 		return obj;
 	}, {});
 
 	if (substitutions) {
-		final = math.simplify(final, substitutions);
+		final = simplify(final, substitutions);
 	}
 
 	//for error subsitution
 	substitutions = name_list.reduce((obj, varName, index) => {
 		if (`δ${varName}` != error_list[index]) {
-			obj[`δ${varName}`] = math.parse(error_list[index]);
+			obj[`δ${varName}`] = parse(error_list[index]);
 		}
 		return obj;
 	}, {});
 
 	if (substitutions) {
-		final = math.simplify(final, substitutions);
+		final = simplify(final, substitutions);
 	}
 
 	return final;
@@ -298,32 +298,32 @@ function get_ep_quad(exp_string, name_list, alias_list, error_list, usable_list)
 		vari = name_list[i];
 		if (usable_list[i]) {
 			final =
-				final + ` + (${math.derivative(exp_string, math.parse(vari)).toString()})^2*(δ${vari})^2`;
+				final + ` + (${derivative(exp_string, parse(vari)).toString()})^2*(δ${vari})^2`;
 		}
 	}
 
 	// Create an object with key-value pairs for variable substitution -> aliases
 	let substitutions = name_list.reduce((obj, varName, index) => {
 		if (varName != alias_list[index]) {
-			obj[varName] = math.parse(alias_list[index]);
+			obj[varName] = parse(alias_list[index]);
 		}
 		return obj;
 	}, {});
 
 	if (substitutions) {
-		final = math.simplify(final, substitutions);
+		final = simplify(final, substitutions);
 	}
 
 	//for error subsitution
 	substitutions = name_list.reduce((obj, varName, index) => {
 		if (`δ${varName}` != error_list[index]) {
-			obj[`δ${varName}`] = math.parse(error_list[index]);
+			obj[`δ${varName}`] = parse(error_list[index]);
 		}
 		return obj;
 	}, {});
 
 	if (substitutions) {
-		final = math.simplify(final, substitutions);
+		final = simplify(final, substitutions);
 	}
 
 	return `(${final.toString()})^(1/2)`;
