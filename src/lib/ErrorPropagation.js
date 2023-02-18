@@ -171,7 +171,9 @@ const rules_simp = [
   "n1/n2/n3 -> n1/(n2*n3)",
   "n1^(1/2) -> sqrt(n1)",
   "n1^(-1/2) -> 1/sqrt(n1)",
-  'sqrt(n1^2*n2^2) -> n1*n2',
+  'n1^2*n2^2 = (n1*n2)^2',
+  'sqrt(n1^2) -> abs(n1)',
+  'abs(n1)*abs(n2) -> abs(n1*n2)',
 ];
 
 const custom_rules = simplify.rules.concat(rules_simp)
