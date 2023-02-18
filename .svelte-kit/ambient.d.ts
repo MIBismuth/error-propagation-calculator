@@ -125,6 +125,7 @@ declare module '$env/static/private' {
 	export const CSF_XSMessage: string;
 	export const XCURSOR_THEME: string;
 	export const MMGT_CLEAR: string;
+	export const XDG_DATA_DIRS: string;
 	export const GDK_BACKEND: string;
 	export const KDE_FULL_SESSION: string;
 	export const npm_config_noproxy: string;
@@ -270,6 +271,7 @@ declare module '$env/dynamic/private' {
 		CSF_XSMessage: string;
 		XCURSOR_THEME: string;
 		MMGT_CLEAR: string;
+		XDG_DATA_DIRS: string;
 		GDK_BACKEND: string;
 		KDE_FULL_SESSION: string;
 		npm_config_noproxy: string;

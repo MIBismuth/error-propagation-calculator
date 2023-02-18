@@ -174,7 +174,7 @@
 
 <div class="flex flex-initial">
 	<div class="w-full max-w-4xl">
-		<div class="flex gap-2 p-4">
+		<div class="flex flex-wrap gap-2 p-4">
 			<input class="bg-inputs p-3 rounded border transition-all" bind:value={exp_string} />
 			<button
 				class="bg-secondary shadow rounded-lg p-0.5 hover:bg-accent-engage hover:bg-opacity-50 hover:rounded transition-all"

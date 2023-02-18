@@ -1,4 +1,23 @@
-import { parse, simplify, derivative } from "mathjs";
+//import { parse, simplify, derivative } from "mathjs";
+import {
+  create,
+  parseDependencies,
+  simplifyDependencies,
+  derivativeDependencies,
+} from "mathjs";
+
+const config = {
+  // optionally, you can specify configuration
+};
+
+const { parse, simplify, derivative } = create(
+  {
+    parseDependencies,
+    simplifyDependencies,
+    derivativeDependencies,
+  },
+  config
+);
 
 const trigFunctions = [
   "sin",
@@ -171,12 +190,12 @@ const rules_simp = [
   "n1/n2/n3 -> n1/(n2*n3)",
   "n1^(1/2) -> sqrt(n1)",
   "n1^(-1/2) -> 1/sqrt(n1)",
-  'n1^2*n2^2 = (n1*n2)^2',
-  'sqrt(n1^2) -> abs(n1)',
-  'abs(n1)*abs(n2) -> abs(n1*n2)',
+  'sqrt(n)^2 -> abs(n)',
+  "sqrt(n1^2) -> abs(n1)",
+  "abs(n1)*abs(n2) -> abs(n1*n2)",
 ];
 
-const custom_rules = simplify.rules.concat(rules_simp)
+const custom_rules = simplify.rules.concat(rules_simp);
 
 function replaceExcelFunctions(input) {
   for (let [key, value] of Object.entries(Excel_to_mathjs)) {
@@ -214,7 +233,7 @@ export function get_latex_exp(exp_string, VariableList) {
   exp_string = exp_string.toString().replace(/\s/g, "").replace(/\,/g, ".");
   exp_string = replaceExcelFunctions(exp_string);
   //console.log(custom_rules)
-  let exp = simplify(exp_string,custom_rules);
+  let exp = simplify(exp_string, custom_rules);
   return exp.toTex();
 }
 

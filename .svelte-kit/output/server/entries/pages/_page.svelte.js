@@ -1,6 +1,6 @@
 import { c as create_ssr_component, d as each, f as add_attribute, e as escape, v as validate_component } from "../../chunks/index.js";
 import "katex";
-import { simplify } from "mathjs";
+import { create, parseDependencies, simplifyDependencies, derivativeDependencies } from "mathjs";
 const Dropdown = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { OptionList = ["default"] } = $$props;
   let { Option = "default" } = $$props;
@@ -58,11 +58,24 @@ const Variable_menu = create_ssr_component(($$result, $$props, $$bindings, slots
 		</div>`;
   })}</div>`;
 });
+const config = {
+  // optionally, you can specify configuration
+};
+const { parse, simplify, derivative } = create(
+  {
+    parseDependencies,
+    simplifyDependencies,
+    derivativeDependencies
+  },
+  config
+);
 const rules_simp = [
   "n1/n2/n3 -> n1/(n2*n3)",
   "n1^(1/2) -> sqrt(n1)",
   "n1^(-1/2) -> 1/sqrt(n1)",
-  "sqrt(n1^2*n2^2) -> n1*n2"
+  "sqrt(n)^2 -> abs(n)",
+  "sqrt(n1^2) -> abs(n1)",
+  "abs(n1)*abs(n2) -> abs(n1*n2)"
 ];
 simplify.rules.concat(rules_simp);
 const _page_svelte_svelte_type_style_lang = "";
@@ -127,7 +140,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$settled = true;
     $$rendered = `<h1 class="${"text-center font-bold font-mono text-2xl p-4"}">Error Propagation Calculator</h1>
 
-<div class="${"flex flex-initial"}"><div class="${"w-full max-w-4xl"}"><div class="${"flex gap-2 p-4"}"><input class="${"bg-inputs p-3 rounded border transition-all"}"${add_attribute("value", exp_string, 0)}>
+<div class="${"flex flex-initial"}"><div class="${"w-full max-w-4xl"}"><div class="${"flex flex-wrap gap-2 p-4"}"><input class="${"bg-inputs p-3 rounded border transition-all"}"${add_attribute("value", exp_string, 0)}>
 			<button class="${"bg-secondary shadow rounded-lg p-0.5 hover:bg-accent-engage hover:bg-opacity-50 hover:rounded transition-all"}">Get Variables</button>
 			<button id="${"get-equation "}" class="${"bg-secondary shadow rounded-lg hover:bg-accent-engage hover:bg-opacity-50 hover:rounded transition-all"}">Get Expression</button>
 			<button class="${"bg-secondary shadow rounded-lg hover:bg-red hover:bg-opacity-50 p-2 hover:rounded transition-all"}">Clear</button></div>
