@@ -234,7 +234,7 @@ export function get_latex_exp(exp_string, VariableList) {
   exp_string = replaceExcelFunctions(exp_string);
   //console.log(custom_rules)
   let exp = simplify(exp_string, custom_rules);
-  return exp.toTex();
+  return exp.toTex().replace(/ȵ/g, '\\');
 }
 
 export function get_error_propagation_exp(
@@ -245,10 +245,10 @@ export function get_error_propagation_exp(
 ) {
   let name_list = VariableList.map((variable) => variable.name);
   let alias_list = VariableList.map((variable) =>
-    variable.alias == "" ? variable.name : variable.alias
+    variable.alias == "" ? variable.name : variable.alias.replace(/\\/g, 'ȵ').replace(/\,/g, ".")
   );
   let error_list = VariableList.map((variable) =>
-    variable.error == "" ? `δ${variable.name}` : variable.error
+    variable.error == "" ? `δ${variable.name}` : variable.error.replace(/\\/g, 'ȵ').replace(/\,/g, ".")
   );
   let usable_list = VariableList.map((variable) => variable.usable);
 
@@ -283,11 +283,11 @@ export function get_error_propagation_exp(
 
   switch (DisplayOption) {
     case "Python":
-      return simplify(exp_string).toString().replace(/\^/g, "**");
+      return simplify(exp_string).toString().replace(/\^/g, "**").replace(/ȵ/g, '\\');
       break;
 
     case "Excel":
-      return replaceMathjsFunctions(simplify(exp_string).toString());
+      return replaceMathjsFunctions(simplify(exp_string).toString()).replace(/ȵ/g, '\\');
       break;
 
     case "Latex":

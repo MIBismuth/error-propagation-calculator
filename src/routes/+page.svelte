@@ -8,6 +8,7 @@
 	import VariableMenu from '$lib/variable_menu.svelte';
 	import WarningBox from '$lib/warningBox.svelte';
 	import ErrorBox from '$lib/errorBox.svelte';
+	import ExpandButton from '$lib/expandButton.svelte';
 	import {get_variables, get_latex_exp, get_error_propagation_exp} from '$lib/ErrorPropagation.js'
 	//import math from 'mathjs';
 
@@ -79,7 +80,7 @@
 	
 	async function get_vars() {
 		try {
-			variables = get_variables(exp_string);
+			variables = get_variables(exp_string.replace(/\\/g, 'Ꮂ'));
 			update_variable_list();
 			erro = false;
 		} catch (error) {
@@ -92,7 +93,10 @@
 	async function get_error_propagation() {
 		get_vars();
 
-		ErrPro = get_error_propagation_exp(exp_string, VariableList, DisplayOption, ErrorOption);
+
+		try {
+			
+		ErrPro = get_error_propagation_exp(exp_string.replace(/\\/g, 'Ꮂ'), VariableList, DisplayOption, ErrorOption);
 		if (DisplayOption == 'Latex') {
 			err_pro_latex = ErrPro;
 			ErrPro = katex.renderToString(ErrPro, {
@@ -100,12 +104,18 @@
 				output: 'mathml'
 			});
 		}
+		} catch (error) {
+			// handle the error and display a custom error message
+			console.error(error);
+			aviso = true;
+		}
 	}
+
 
 	async function get_latex() {
 		try {
 			
-			Ltx = get_latex_exp(exp_string, VariableList)
+			Ltx = get_latex_exp(exp_string.replace(/\\/g, 'ȵ'), VariableList)
 
 			latex_string = katex.renderToString(Ltx, {
 				throwOnError: false,
@@ -216,6 +226,8 @@
 		<DisplayResults exp={ErrPro} exp_latex={err_pro_latex} flag_latex={DisplayOption == 'Latex'} />
 
 		<Box {expM} {expQ} />
+		<ExpandButton/>
+
 	</div>
 	<div class=" bg-primary md:w-1/4" />
 </div>

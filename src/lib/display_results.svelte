@@ -4,7 +4,7 @@
 	export let exp_latex = "";
     export let flag_latex = 0;
 </script>
-<div class=" w-full">
+<div class=" w-full  text-white" >
 
     <div class="flex flex-col  bg-inputs m-3 rounded border">
         <div class="flex flex-row justify-between flex-wrap gap-2 bg-metal ">
