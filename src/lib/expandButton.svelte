@@ -59,7 +59,7 @@
 {#if expanded}
   <div
     class=" text-primary text-justify fixed bottom-20 right-5 bg-white h-4/5 w-11/12 sm:w-3/5 md:w-1/2 lg:w-2/5 
-	overflow-y-scroll rounded shadow-md"
+	overflow-y-scroll rounded shadow-md transition-all"
     transition:slide
     on:click={(e) => e.stopPropagation()}
     on:keydown={handleKeyDown}
