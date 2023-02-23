@@ -122,12 +122,7 @@
 				output: 'mathml'
 			});
 			erro = false;
-			if (Ltx.includes('mathrm')) {
-				aviso=true;
-				}
-			else{
-				aviso=false;
-			}	
+				
 		} catch (error) {
 			// handle the error and display a custom error message
 			console.error(error);
