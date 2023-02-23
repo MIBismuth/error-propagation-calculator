@@ -174,7 +174,7 @@ const Excel_to_mathjs = {
   "TANH(": "tanh(",
   "COS(": "cos(",
   "EXP(": "exp(",
-  "LOG(": "log(",
+  "LOG(": "log10(",
   "MOD(": "mod(",
   "SIN(": "sin(",
   "TAN(": "tan(",
@@ -234,7 +234,7 @@ export function get_latex_exp(exp_string, VariableList) {
   exp_string = replaceExcelFunctions(exp_string);
   //console.log(custom_rules)
   let exp = simplify(exp_string, custom_rules);
-  return exp.toTex().replace(/ȵ/g, '\\');
+  return exp.toTex().replace(/ȵ/g, '\\').replace(/ɮ/g, '{').replace(/ɶ/g, '}');
 }
 
 export function get_error_propagation_exp(
@@ -245,10 +245,10 @@ export function get_error_propagation_exp(
 ) {
   let name_list = VariableList.map((variable) => variable.name);
   let alias_list = VariableList.map((variable) =>
-    variable.alias == "" ? variable.name : variable.alias.replace(/\\/g, 'ȵ').replace(/\,/g, ".")
+    variable.alias == "" ? variable.name : variable.alias.replace(/\\/g, 'ȵ').replace(/{/g, 'ɮ').replace(/}/g, 'ɶ').replace(/\,/g, ".")
   );
   let error_list = VariableList.map((variable) =>
-    variable.error == "" ? `δ${variable.name}` : variable.error.replace(/\\/g, 'ȵ').replace(/\,/g, ".")
+    variable.error == "" ? `δ${variable.name}` : variable.error.replace(/\\/g, 'ȵ').replace(/{/g, 'ɮ').replace(/}/g, 'ɶ').replace(/\,/g, ".")
   );
   let usable_list = VariableList.map((variable) => variable.usable);
 
@@ -283,11 +283,11 @@ export function get_error_propagation_exp(
 
   switch (DisplayOption) {
     case "Python":
-      return simplify(exp_string).toString().replace(/\^/g, "**").replace(/ȵ/g, '\\');
+      return simplify(exp_string).toString().replace(/\^/g, "**").replace(/ȵ/g, '\\').replace(/ɮ/g, '{').replace(/ɶ/g, '}');
       break;
 
     case "Excel":
-      return replaceMathjsFunctions(simplify(exp_string).toString()).replace(/ȵ/g, '\\');
+      return replaceMathjsFunctions(simplify(exp_string).toString()).replace(/ȵ/g, '\\').replace(/ɮ/g, '{').replace(/ɶ/g, '}');
       break;
 
     case "Latex":

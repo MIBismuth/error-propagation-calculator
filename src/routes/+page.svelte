@@ -80,7 +80,7 @@
 	
 	async function get_vars() {
 		try {
-			variables = get_variables(exp_string.replace(/\\/g, 'Ꮂ'));
+			variables = get_variables(exp_string.replace(/\\/g, 'ȵ'));
 			update_variable_list();
 			erro = false;
 		} catch (error) {
@@ -96,7 +96,7 @@
 
 		try {
 			
-		ErrPro = get_error_propagation_exp(exp_string.replace(/\\/g, 'Ꮂ'), VariableList, DisplayOption, ErrorOption);
+		ErrPro = get_error_propagation_exp(exp_string.replace(/\\/g, 'ȵ'), VariableList, DisplayOption, ErrorOption);
 		if (DisplayOption == 'Latex') {
 			err_pro_latex = ErrPro;
 			ErrPro = katex.renderToString(ErrPro, {

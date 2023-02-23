@@ -226,7 +226,7 @@
     overflow-y: scroll;
     text-align: justify;
   } */
-  #expanded-content:focus {
+  /* #expanded-content:focus {
     outline: none;
-  }
+  } */
 </style>
