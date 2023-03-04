@@ -1,6 +1,6 @@
 <script>
 	import { fly, slide } from 'svelte/transition';
-	export let exp = "";
+	export let exp = "Your Expression Will Appear Here";
 	export let exp_latex = "";
     export let flag_latex = 0;
 </script>
