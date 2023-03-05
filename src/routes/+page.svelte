@@ -191,7 +191,7 @@
 </h2>
 <div class="flex flex-initial">
   <div class="w-full max-w-4xl">
-	<p class = "p-4">1. Input your Expression, supports Excel and Python Syntax.</p>
+	<p class = "p-4">1. Input your Expression (supports Excel and Python Syntax)</p>
     <div class="flex flex-wrap gap-2 p-4">
       <input
         class="bg-inputs p-3 rounded border transition-all"
@@ -222,11 +222,11 @@
 
     <DisplayResults exp={latex_string} exp_latex={Ltx} flag_latex={1} />
 
-	<p class = "p-4">2. Chose the the Alias and Error for your variables, this can be their value, a custom name or an Excel cell!</p>
+	<p class = "p-4">2. Choose the Alias and Error for your variables. This can be their value, a custom name or an Excel cell!</p>
 
     <VariableMenu bind:VariableList />
 
-	<p class = "p-4">3. Chose a formatting option (Python, Excel or Latex) and the error type (Absolute or Quadratic) and get your Propagation of Error Expression!</p>
+	<p class = "p-4">3. Choose a formatting option (Python, Excel or Latex) and the error type (Absolute or Quadratic) and get your Propagation of Error Expression!</p>
 
     <div class="flex m-3 gap-2">
       <Dropdown OptionList={DisplayOptionList} bind:Option={DisplayOption} />
