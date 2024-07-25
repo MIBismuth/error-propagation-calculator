@@ -2,6 +2,12 @@
 
 Welcome to the Propagation of Error Calculator! This web application allows you to automatically calculate the Propagation of Error (or Propagation of Uncertainty) for any given expression. It supports various syntaxes including Excel, Python, and LaTeX, making it a versatile tool for your data analysis and scientific needs.
 
+
+## Live Website
+
+Try out the application live at [Propagation of Error Calculator](https://errorpropagation.com).
+
+
 1. **Simply input your math expression, it automatically recognizes all the variables!**
 
 ![](static/expression_vars.png)
@@ -18,9 +24,7 @@ Welcome to the Propagation of Error Calculator! This web application allows you 
 - **Copy Results**: Easily copy the results into your Excel, Python, or LaTeX projects.
 - **User-Friendly Interface**: Clean and intuitive design for a seamless user experience.
 
-## Live Website
 
-Try out the application live at [Propagation of Error Calculator](https://errorpropagation.com).
 
 ## Getting Started
 
