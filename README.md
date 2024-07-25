@@ -44,7 +44,7 @@ git clone https://github.com/MIBismuth/error-propagation-calculator
 2. Navigate to the project directory:
 
 ```bash
-cd ErrorPropagationProduction
+cd error-propagation-calculator
 ```
 
 3. Install the dependencies:
