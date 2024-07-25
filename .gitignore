@@ -1,1 +1,25 @@
 .svelte-kit/
+
+# Node modules
+node_modules/
+
+# Build output
+public/
+dist/
+
+# Log files
+*.log
+
+# Environment variables
+.env
+
+# IDE-specific files
+.vscode/
+.idea/
+
+# MacOS-specific files
+.DS_Store
+
+# Other
+*.tmp
+
