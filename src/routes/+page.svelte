@@ -11,13 +11,6 @@ import VariableMenu from "$lib/variable_menu.svelte";
 import WarningBox from "$lib/warningBox.svelte";
 import ErrorBox from "$lib/errorBox.svelte";
 import ExpandButton from "$lib/expandButton.svelte";
-import {
-    get_variables,
-    get_latex_exp,
-    get_error_propagation_exp,
-} from "$lib/ErrorPropagation.js";
-
-//import math from 'mathjs';
 
 let exp_string = "x+y";
 let variables = ["x", "y"];
@@ -36,7 +29,6 @@ let latex_string = "";
 let aviso = false;
 
 class Variable {
-    // @ts-ignore
     constructor(name, alias = "", error = "", usable = true) {
         this.name = name;
         this.alias = alias;
@@ -46,7 +38,6 @@ class Variable {
 }
 
 let VariableList = [];
-//Removes old variables and adds new ones
 function update_variable_list() {
     for (let Var of VariableList) {
         if (!variables.includes(Var.name)) {
@@ -66,16 +57,12 @@ function toggle(i) {
     VariableList = VariableList;
 }
 
-update_variable_list();
-
 function updateSelectedOption(event) {
     selectedOption = event.target.value;
 }
 
 onMount(async () => {
-
-
-    variables = get_variables(exp_string);
+    variables = await getVariables();
     expM = katex.renderToString(expabs, {
         throwOnError: false,
         output: "mathml",
@@ -88,7 +75,8 @@ onMount(async () => {
     loading.set(false);
 });
 
-async function get_vars() {
+async function getVariables() {
+    const { get_variables } = await import('$lib/ErrorPropagation.js');
     try {
         variables = get_variables(
             exp_string.replace(/\\/g, "ȵ").replace(/\*\*/g, "^")
@@ -96,15 +84,14 @@ async function get_vars() {
         update_variable_list();
         erro = false;
     } catch (error) {
-        // handle the error and display a custom error message
         console.error(error);
         erro = true;
     }
 }
 
-async function get_error_propagation() {
-    get_vars();
-
+async function getErrorPropagation() {
+    await getVariables();
+    const { get_error_propagation_exp } = await import('$lib/ErrorPropagation.js');
     try {
         ErrPro = get_error_propagation_exp(
             exp_string.replace(/\\/g, "ȵ").replace(/\*\*/g, "^"),
@@ -120,13 +107,13 @@ async function get_error_propagation() {
             });
         }
     } catch (error) {
-        // handle the error and display a custom error message
         console.error(error);
         aviso = true;
     }
 }
 
-async function get_latex() {
+async function getLatex() {
+    const { get_latex_exp } = await import('$lib/ErrorPropagation.js');
     try {
         Ltx = get_latex_exp(
             exp_string.replace(/\\/g, "ȵ").replace(/\*\*/g, "^"),
@@ -139,13 +126,11 @@ async function get_latex() {
         });
         erro = false;
     } catch (error) {
-        // handle the error and display a custom error message
         console.error(error);
         erro = true;
     }
 }
 
-//DROPDOWN BUTTONS LIST
 let DisplayOptionList = ["Python", "Excel", "Latex"];
 let DisplayOption = "Python";
 
@@ -188,80 +173,80 @@ function clear() {
 </script>
 
 {#if $loading}
-<Loading />
+    <Loading />
 {:else}
 
-<h1 class="text-center font-bold font-mono text-2xl p-4">
-    Propagation of Error Calculator
-</h1>
-<h2 class="text-center font-bold font-mono text-l p-4">
-    Automatically calculate the Propagation of Error (or Propagation of Uncertainty) of any expression and easily
-    copy to your Excel, Python or Latex Project! Click the HELP menu for further
-    details.
-</h2>
-<div class="flex flex-initial">
-    <div class="w-full max-w-4xl">
-        <p class = "p-4">1. Input your Expression (supports Excel and Python Syntax)</p>
-        <div class="flex flex-wrap gap-2 p-4">
-            <input
-                class="bg-inputs p-3 rounded border transition-all"
-                bind:value={exp_string}
+    <h1 class="text-center font-bold font-mono text-2xl p-4">
+        Propagation of Error Calculator
+    </h1>
+    <h2 class="text-center font-bold font-mono text-l p-4">
+        Automatically calculate the Propagation of Error (or Propagation of Uncertainty) of any expression and easily
+        copy to your Excel, Python or Latex Project! Click the HELP menu for further
+        details.
+    </h2>
+    <div class="flex flex-initial">
+        <div class="w-full max-w-4xl">
+            <p class="p-4">1. Input your Expression (supports Excel and Python Syntax)</p>
+            <div class="flex flex-wrap gap-2 p-4">
+                <input
+                    class="bg-inputs p-3 rounded border transition-all"
+                    bind:value={exp_string}
+                />
+                <button
+                    class="bg-secondary shadow rounded-lg p-0.5 hover:bg-accent-engage hover:bg-opacity-50 hover:rounded transition-all"
+                    on:click={getVariables}>Get Variables</button
+                >
+                <button
+                    id="get-equation "
+                    class="bg-secondary shadow rounded-lg hover:bg-accent-engage hover:bg-opacity-50 hover:rounded transition-all"
+                    on:click={getLatex}>Get Expression</button
+                >
+                <button
+                    class="bg-secondary shadow rounded-lg hover:bg-red hover:bg-opacity-50 p-2 hover:rounded transition-all"
+                    on:click={clear}>Clear</button
+                >
+            </div>
+
+            {#if erro}
+                <ErrorBox />
+            {/if}
+
+            {#if aviso}
+                <WarningBox />
+            {/if}
+
+            <DisplayResults exp={latex_string} exp_latex={Ltx} flag_latex={1} />
+
+            <p class="p-4">2. Choose the Alias and Error for your variables. This can be their value, a custom name or an Excel cell!</p>
+
+            <VariableMenu bind:VariableList />
+
+            <p class="p-4">3. Choose a formatting option (Python, Excel or Latex) and the error type (Absolute or Quadratic) and get your Propagation of Error Expression!</p>
+
+            <div class="flex m-3 gap-2">
+                <Dropdown OptionList={DisplayOptionList} bind:Option={DisplayOption} />
+                <Dropdown OptionList={ErrorOptionList} bind:Option={ErrorOption} />
+                <button
+                    class="shadow bg-secondary rounded-lg p-0.5 hover:bg-accent-engage 
+                    hover:bg-opacity-50 hover:rounded hover:m-0.5 transition-all"
+                    on:click={getErrorPropagation}>Get Error Propagation</button
+                >
+            </div>
+
+            <DisplayResults
+                exp={ErrPro}
+                exp_latex={err_pro_latex}
+                flag_latex={DisplayOption == "Latex"}
             />
-            <button
-                class="bg-secondary shadow rounded-lg p-0.5 hover:bg-accent-engage hover:bg-opacity-50 hover:rounded transition-all"
-                on:click={get_vars}>Get Variables</button
-            >
-            <button
-                id="get-equation "
-                class="bg-secondary shadow rounded-lg hover:bg-accent-engage hover:bg-opacity-50 hover:rounded transition-all"
-                on:click={get_latex}>Get Expression</button
-            >
-            <button
-                class="bg-secondary shadow rounded-lg hover:bg-red hover:bg-opacity-50 p-2 hover:rounded transition-all"
-                on:click={clear}>Clear</button
-            >
+
+            <Box {expM} {expQ} />
+            <ExpandButton />
+
+            <p class="p-4">And that's it! You can now copy the result into your Project and continue your work!</p>
+
         </div>
-
-        {#if erro}
-            <ErrorBox />
-        {/if}
-
-        {#if aviso}
-            <WarningBox />
-        {/if}
-
-        <DisplayResults exp={latex_string} exp_latex={Ltx} flag_latex={1} />
-
-        <p class = "p-4">2. Choose the Alias and Error for your variables. This can be their value, a custom name or an Excel cell!</p>
-
-        <VariableMenu bind:VariableList />
-
-        <p class = "p-4">3. Choose a formatting option (Python, Excel or Latex) and the error type (Absolute or Quadratic) and get your Propagation of Error Expression!</p>
-
-        <div class="flex m-3 gap-2">
-            <Dropdown OptionList={DisplayOptionList} bind:Option={DisplayOption} />
-            <Dropdown OptionList={ErrorOptionList} bind:Option={ErrorOption} />
-            <button
-                class="shadow bg-secondary rounded-lg p-0.5 hover:bg-accent-engage 
-                hover:bg-opacity-50 hover:rounded hover:m-0.5 transition-all"
-                on:click={get_error_propagation}>Get Error Propagation</button
-            >
-        </div>
-
-        <DisplayResults
-            exp={ErrPro}
-            exp_latex={err_pro_latex}
-            flag_latex={DisplayOption == "Latex"}
-        />
-
-        <Box {expM} {expQ} />
-        <ExpandButton />
-
-        <p class = "p-4">And that's it! You can now copy the result into your Project and continue your work!</p>
-
+        <div class=" bg-primary md:w-1/4" />
     </div>
-    <div class=" bg-primary md:w-1/4" />
-</div>
 
 {/if}
 <style lang="postcss">
@@ -270,3 +255,4 @@ background-color: theme(colors.primary);
 @apply text-white;
 }
 </style>
+
