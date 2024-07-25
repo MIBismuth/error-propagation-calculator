@@ -50,7 +50,7 @@ npm run dev
 
 Open your browser and visit http://localhost:3000 to see the application in action.
 
-Usage
+## Usage
 
 - Input Expression: Enter your mathematical expression in the input field. The application supports both Excel and Python syntax.
 
@@ -66,7 +66,7 @@ Usage
 
 - Copy Results: Copy the generated results into your project.
 
-Contributing
+## Contributing
 
 Contributions are welcome! If you have suggestions, bug reports, or want to contribute to the development of this project, please follow these steps:
 
@@ -77,11 +77,11 @@ Contributions are welcome! If you have suggestions, bug reports, or want to cont
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the GPL v3.0. See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
-José Lopes and João Rei - Authors of the project.
+[José Lopes](https://joselopes.dev) and João Rei - Authors of the project.
 
 The development was inspired by the sheer suffering of calculating propagations of error by hand during physics laboratories.
 
