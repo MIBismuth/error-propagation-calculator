@@ -35,7 +35,7 @@ To get started with the Propagation of Error Calculator locally, follow these st
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/MIBismuth/ErrorPropagationProduction.git
+git clone https://github.com/MIBismuth/error-propagation-calculator
 ```
 2. Navigate to the project directory:
 
