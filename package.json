@@ -40,7 +40,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"katex": "^0.16.4",
+		"katex": "^0.16.10",
 		"mathjs": "^11.5.1"
 	}
 }
