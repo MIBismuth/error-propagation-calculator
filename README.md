@@ -78,6 +78,11 @@ Open your browser and visit http://localhost:3000 to see the application in acti
 
 - Copy Results: Copy the generated results into your project.
 
+## TODO
+
+- [ ] Resizeable boxes
+- [ ] Improve help menu (perhaps dedicated help page)
+
 ## Contributing
 
 Contributions are welcome! If you have suggestions, bug reports, or want to contribute to the development of this project, please follow these steps:
